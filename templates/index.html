@@ -4,43 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Security Labs</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .lab-card {
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 8px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="header">
-        <h1>🔒 Web Security Labs</h1>
-        <p>Learn about common web vulnerabilities and defenses</p>
-    </div>
+    <div class="container">
+        <header>
+            <h1>🔒 Web Security Labs</h1>
+            <p class="subtitle">Learn about common web vulnerabilities and defenses</p>
+            <p style="background: #e0f2fe; padding: 10px; border-radius: 5px;">
+                📊 Database: <strong>vulnerable.db</strong> initialized with sample data
+            </p>
+        </header>
 
-    <div class="lab-card">
-        <h2>📋 Coming Soon Labs:</h2>
-        <ul>
-            <li>SQL Injection demo</li>
-            <li>XSS attack & prevention</li>
-            <li>CSRF explanation + protection</li>
-            <li>Input validation & sanitization</li>
-        </ul>
-    </div>
+        <div class="lab-grid">
+            <a href="#" class="lab-card">
+                <h2>SQL Injection</h2>
+                <p>Demo of SQL injection vulnerabilities and parameterized queries</p>
+                <span class="tech-badge">SQLite</span>
+            </a>
+            <a href="#" class="lab-card">
+                <h2>XSS</h2>
+                <p>Cross-Site Scripting attack & prevention</p>
+                <span class="tech-badge">HTML/JS</span>
+            </a>
+            <a href="#" class="lab-card">
+                <h2>CSRF</h2>
+                <p>Cross-Site Request Forgery explanation + protection</p>
+                <span class="tech-badge">Flask-WTF</span>
+            </a>
+            <a href="#" class="lab-card">
+                <h2>Input Validation</h2>
+                <p>Input validation & sanitization techniques</p>
+                <span class="tech-badge">Regex</span>
+            </a>
+        </div>
 
-    <div class="tech-stack">
-        <p><strong>Tech Stack:</strong> Python (Flask), HTML/JS, SQLite</p>
+        <div class="info-box">
+            <h3>📁 Project Structure</h3>
+            <pre style="background: #f1f5f9; padding: 1rem; border-radius: 5px;">
+web-security-labs/
+├── app.py
+├── requirements.txt
+├── database/
+│   ├── init_db.py
+│   └── vulnerable.db          ← SQLite database file
+├── templates/
+│   └── index.html
+└── static/
+    └── css/
+        └── style.css</pre>
+        </div>
     </div>
 </body>
 </html>
