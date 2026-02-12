@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 import sqlite3
 import os
 
@@ -51,6 +51,30 @@ def test_db():
         return f"Database connection successful! Found {len(users)} users."
     except Exception as e:
         return f"Database error: {str(e)}"
+    
+@app.route('/sqli')
+def sqli():
+    return render_template('sqli.html')
+
+@app.route('/sqli/vulnerable', methods=['POST'])
+def sqli_vulnerable():
+    username = request.form.get('username', '')
+    
+    # VULNERABLE: Direct string concatenation
+    query = f"SELECT * FROM users WHERE username = '{username}'"
+    
+    conn = get_db_connection()
+    try:
+        cursor = conn.execute(query)
+        results = cursor.fetchall()
+        users = [dict(row) for row in results]
+    except Exception as e:
+        users = []
+        error = str(e)
+    finally:
+        conn.close()
+    
+    return jsonify({'users': users, 'query': query})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
