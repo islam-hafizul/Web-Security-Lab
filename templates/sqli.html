@@ -47,6 +47,10 @@
             margin-top: 1rem;
             font-family: monospace;
         }
+
+        .secure {
+            border-left: 4px solid var(--success);
+        }
     </style>
 </head>
 <body>
@@ -73,6 +77,18 @@
                     <!-- Results will appear here -->
                 </div>
             </div>
+
+            <div class="demo-section secure">
+                <h3>✅ Secure Implementation</h3>
+                <p>This uses parameterized queries - SAFE!</p>
+                <div class="input-group">
+                    <input type="text" id="secureUsername" placeholder="Enter username" value="admin' OR '1'='1">
+                    <button onclick="testSecure()">Execute Query</button>
+                </div>
+                <div class="result" id="secureResult">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -91,6 +107,26 @@
             document.getElementById('vulnResult').innerHTML = `
                 <strong>Query executed:</strong><br>
                 <code>${data.query}</code><br><br>
+                <strong>Results (${data.users.length} found):</strong><br>
+                <pre>${JSON.stringify(data.users, null, 2)}</pre>
+            `;
+        }
+
+        async function testSecure() {
+            const username = document.getElementById('secureUsername').value;
+            const response = await fetch('/sqli/secure', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `username=${encodeURIComponent(username)}`
+            });
+            
+            const data = await response.json();
+            document.getElementById('secureResult').innerHTML = `
+                <strong>Query executed:</strong><br>
+                <code>SELECT * FROM users WHERE username = ?</code><br>
+                <code>Parameter: "${username}"</code><br><br>
                 <strong>Results (${data.users.length} found):</strong><br>
                 <pre>${JSON.stringify(data.users, null, 2)}</pre>
             `;
