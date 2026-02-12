@@ -76,5 +76,25 @@ def sqli_vulnerable():
     
     return jsonify({'users': users, 'query': query})
 
+@app.route('/sqli/secure', methods=['POST'])
+def sqli_secure():
+    username = request.form.get('username', '')
+    
+    # SECURE: Parameterized query
+    query = "SELECT * FROM users WHERE username = ?"
+    
+    conn = get_db_connection()
+    try:
+        cursor = conn.execute(query, (username,))
+        results = cursor.fetchall()
+        users = [dict(row) for row in results]
+    except Exception as e:
+        users = []
+        error = str(e)
+    finally:
+        conn.close()
+    
+    return jsonify({'users': users, 'query': query})
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
