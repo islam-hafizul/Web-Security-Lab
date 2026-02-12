@@ -60,8 +60,7 @@ def sqli():
 def sqli_vulnerable():
     username = request.form.get('username', '')
     
-    # VULNERABLE: Direct string concatenation
-    query = f"SELECT * FROM users WHERE username = '{username}'"
+    query = f"SELECT * FROM users WHERE username = '{username}'"  # VULNERABLE: Direct string concatenation
     
     conn = get_db_connection()
     try:
