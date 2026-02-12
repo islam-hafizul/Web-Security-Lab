@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Injection Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .lab-container {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+        
+        .demo-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+        
+        .vulnerable {
+            border-left: 4px solid var(--danger);
+        }
+        
+        input {
+            padding: 0.5rem;
+            width: 300px;
+            margin-right: 1rem;
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .result {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-family: monospace;
+        }
+
+        .secure {
+            border-left: 4px solid var(--success);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" style="display: inline-block; margin-bottom: 1rem;">← Back to Labs</a>
+        
+        <div class="lab-container">
+            <h1>💉 SQL Injection Lab</h1>
+            
+            <div class="explanation">
+                <h3>What is SQL Injection?</h3>
+                <p>SQL Injection occurs when an attacker inserts malicious SQL code into input fields.</p>
+                <p><strong>Test Payload:</strong> <code>admin' OR '1'='1</code></p>
+            </div>
+
+            <div class="demo-section vulnerable">
+                <h3>⚠️ Vulnerable Implementation</h3>
+                <p>This uses string concatenation in SQL queries - DANGEROUS!</p>
+                <div class="input-group">
+                    <input type="text" id="vulnUsername" placeholder="Enter username" value="admin' OR '1'='1">
+                    <button onclick="testVulnerable()">Execute Query</button>
+                </div>
+                <div class="result" id="vulnResult">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
+
+            <div class="demo-section secure">
+                <h3>✅ Secure Implementation</h3>
+                <p>This uses parameterized queries - SAFE!</p>
+                <div class="input-group">
+                    <input type="text" id="secureUsername" placeholder="Enter username" value="admin' OR '1'='1">
+                    <button onclick="testSecure()">Execute Query</button>
+                </div>
+                <div class="result" id="secureResult">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testVulnerable() {
+            const username = document.getElementById('vulnUsername').value;
+            const response = await fetch('/sqli/vulnerable', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `username=${encodeURIComponent(username)}`
+            });
+            
+            const data = await response.json();
+            document.getElementById('vulnResult').innerHTML = `
+                <strong>Query executed:</strong><br>
+                <code>${data.query}</code><br><br>
+                <strong>Results (${data.users.length} found):</strong><br>
+                <pre>${JSON.stringify(data.users, null, 2)}</pre>
+            `;
+        }
+
+        async function testSecure() {
+            const username = document.getElementById('secureUsername').value;
+            const response = await fetch('/sqli/secure', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `username=${encodeURIComponent(username)}`
+            });
+            
+            const data = await response.json();
+            document.getElementById('secureResult').innerHTML = `
+                <strong>Query executed:</strong><br>
+                <code>SELECT * FROM users WHERE username = ?</code><br>
+                <code>Parameter: "${username}"</code><br><br>
+                <strong>Results (${data.users.length} found):</strong><br>
+                <pre>${JSON.stringify(data.users, null, 2)}</pre>
+            `;
+        }
+    </script>
+</body>
+</html>

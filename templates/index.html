@@ -11,13 +11,12 @@
         <header>
             <h1>🔒 Web Security Labs</h1>
             <p class="subtitle">Learn about common web vulnerabilities and defenses</p>
-            <p style="background: #e0f2fe; padding: 10px; border-radius: 5px;">
-                📊 Database: <strong>vulnerable.db</strong> initialized with sample data
+                Database: <strong>vulnerable.db</strong> initialized with sample data
             </p>
         </header>
 
         <div class="lab-grid">
-            <a href="/templates/sqli.html" class="lab-card">
+            <a href="{{ url_for('sqli') }}" class="lab-card">
                 <div class="lab-icon">💉</div>
                 <h2>SQL Injection</h2>
                 <p>Demo of SQL injection vulnerabilities and parameterized queries</p>
@@ -65,7 +64,7 @@ web-security-labs/
         </div>
 
         <footer>
-            <p>Tech Stack: Python Flask | HTML/CSS/JS | SQLite</p>
+            <p>Tech Stack: Python Flask | HTML/CSS/JS | SQLite  </p>
         </footer>
     </div>
 </body>
