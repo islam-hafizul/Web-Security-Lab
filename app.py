@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import sqlite3
 import os
+import html
 
 app = Flask(__name__)
 
@@ -103,6 +104,12 @@ def xss_page():
 def xss_vulnerable():
     comment = request.form.get('comment', '')
     return jsonify({'comment': comment})   # VULNERABLE: No escaping
+
+@app.route('/xss/secure', methods=['POST'])
+def xss_secure():
+    comment = request.form.get('comment', '')
+    escaped_comment = html.escape(comment)  # SECURE: Escape user input
+    return jsonify({'comment': escaped_comment})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
