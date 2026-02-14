@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import sqlite3
 import os
 import html
+import re 
 
 app = Flask(__name__)
 
@@ -110,6 +111,40 @@ def xss_secure():
     comment = request.form.get('comment', '')
     escaped_comment = html.escape(comment)  # SECURE: Escape user input
     return jsonify({'comment': escaped_comment})
+@app.route('/validation')
+def validation():
+    return render_template('validation.html')
+
+@app.route('/validation/vulnerable', methods=['POST'])
+def validation_vulnerable():
+    email = request.form.get('email', '')
+    age = request.form.get('age', '')
+    # VULNERABLE: No validation
+    return jsonify({'email': email, 'age': age, 'status': 'accepted'})
+
+@app.route('/validation/secure', methods=['POST'])
+def validation_secure():
+    email = request.form.get('email', '')
+    age = request.form.get('age', '')
+    
+    errors = []
+    
+    # Email validation
+    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+        errors.append('Invalid email format')
+    
+    # Age validation
+    try:
+        age_int = int(age)
+        if age_int < 1 or age_int > 120:
+            errors.append('Age must be between 1 and 120')
+    except ValueError:
+        errors.append('Age must be a valid number')
+    
+    if errors:
+        return jsonify({'errors': errors, 'status': 'error'})
+    
+    return jsonify({'email': email, 'age': age, 'status': 'accepted'})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
