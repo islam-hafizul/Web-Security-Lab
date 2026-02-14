@@ -17,4 +17,4 @@ Interactive learning platform demonstrating common web security vulnerabilities 
 ### 2. XSS Lab
 - **Vulnerable**: Direct HTML injection
 - **Secure**: HTML entity escaping
-- **Test payload**: <script>alert('XSS')</script>
+- **Test payload**: ```<script>alert('XSS')</script>```
