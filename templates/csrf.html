@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSRF Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .lab-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+        .demo-section { margin: 2rem 0; padding: 1.5rem; background: #f8fafc; border-radius: 8px; }
+        input { padding: 0.5rem; margin: 0.5rem 0; width: 200px; }
+        .malicious-site { background: #fee2e2; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" style="display: inline-block; margin-bottom: 1rem;">← Back to Labs</a>
+        
+        <div class="lab-container">
+            <h1>🔄 CSRF (Cross-Site Request Forgery) Lab</h1>
+            
+            <div class="explanation">
+                <h3>What is CSRF?</h3>
+                <p>CSRF tricks users into submitting malicious requests using their authenticated session.</p>
+            </div>
+
+            <div class="demo-section vulnerable">
+                <h3>❌ Vulnerable Implementation</h3>
+                <p>No CSRF protection - forms can be submitted from other sites</p>
+                
+                <h4>Legitimate Form:</h4>
+                <form id="vulnerableForm" action="/csrf/vulnerable/transfer" method="POST">
+                    <div>
+                        <label>Amount: </label>
+                        <input type="number" name="amount" value="1000">
+                    </div>
+                    <div>
+                        <label>To Account: </label>
+                        <input type="text" name="to_account" value="attacker123">
+                    </div>
+                    <button type="submit">Transfer Money</button>
+                </form>
+                
+                <div class="malicious-site">
+                    <h4>⚠️ Simulated Malicious Site:</h4>
+                    <p>This could be hosted on another domain:</p>
+                    <button onclick="simulateMaliciousRequest()">Click for Free Money!</button>
+                    <p id="maliciousResult"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function simulateMaliciousRequest() {
+            // Simulate a malicious form submission from another site
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/csrf/vulnerable/transfer';
+            
+            const amountInput = document.createElement('input');
+            amountInput.type = 'hidden';
+            amountInput.name = 'amount';
+            amountInput.value = '5000';
+            
+            const accountInput = document.createElement('input');
+            accountInput.type = 'hidden';
+            accountInput.name = 'to_account';
+            accountInput.value = 'hacker456';
+            
+            form.appendChild(amountInput);
+            form.appendChild(accountInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+</html>
