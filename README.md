@@ -29,6 +29,26 @@ Interactive learning platform demonstrating common web security vulnerabilities 
 - **Secure**: Regex validation and type checking
 - **Tests**: Email format, age range, input sanitization
 
+## Quick Start
+
+### 1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/web-security-labs.git
+cd web-security-labs
+```
+
+### 2. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+### 3. Run the application:
+
+```bash
+python app.py
+```
+### 4. Visit http://localhost:5000
+
 ## Tech Stack
 - **Backend**: Python Flask
 - **Database**: SQLite

@@ -6,8 +6,8 @@ import re
 
 app = Flask(__name__)
 
+# Initialize the database if it doesn't exist
 def init_database():
-    """Initialize the database if it doesn't exist"""
     db_path = 'database/vulnerable.db'
     
     # Check if database file exists
@@ -35,8 +35,7 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# Initialize database on startup
-init_database()
+init_database()  # Initialize database on startup
 
 @app.route('/')
 def index():
@@ -81,8 +80,7 @@ def sqli_vulnerable():
 def sqli_secure():
     username = request.form.get('username', '')
     
-    # SECURE: Parameterized query
-    query = "SELECT * FROM users WHERE username = ?"
+    query = "SELECT * FROM users WHERE username = ?" # SECURE: Parameterized query
     
     conn = get_db_connection()
     try:
@@ -111,6 +109,7 @@ def xss_secure():
     comment = request.form.get('comment', '')
     escaped_comment = html.escape(comment)  # SECURE: Escape user input
     return jsonify({'comment': escaped_comment})
+
 @app.route('/validation')
 def validation():
     return render_template('validation.html')
@@ -119,8 +118,7 @@ def validation():
 def validation_vulnerable():
     email = request.form.get('email', '')
     age = request.form.get('age', '')
-    # VULNERABLE: No validation
-    return jsonify({'email': email, 'age': age, 'status': 'accepted'})
+    return jsonify({'email': email, 'age': age, 'status': 'accepted'})   # VULNERABLE: No validation
 
 @app.route('/validation/secure', methods=['POST'])
 def validation_secure():
