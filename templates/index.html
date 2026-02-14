@@ -16,13 +16,14 @@
         </header>
 
         <div class="lab-grid">
-            <a href="{{ url_for('sqli') }}" class="lab-card">
+            <a href="{{ url_for('sqli_page') }}" class="lab-card">
                 <div class="lab-icon">💉</div>
                 <h2>SQL Injection</h2>
                 <p>Demo of SQL injection vulnerabilities and parameterized queries</p>
                 <span class="tech-badge">SQLite</span>
             </a>
-            <a href="#" class="lab-card">
+            <a href="{{ url_for('xss_page') }}" class="lab-card">
+                <div class="lab-icon">💉</div>
                 <h2>XSS</h2>
                 <p>Cross-Site Scripting attack & prevention</p>
                 <span class="tech-badge">HTML/JS</span>
