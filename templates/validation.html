@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Validation Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .lab-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+        .demo-section { margin: 2rem 0; padding: 1.5rem; background: #f8fafc; border-radius: 8px; }
+        input { padding: 0.5rem; margin: 0.5rem 0; width: 300px; display: block; }
+        .test-cases { background: #fef3c7; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+        code { background: #e5e7eb; padding: 0.2rem 0.4rem; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" style="display: inline-block; margin-bottom: 1rem;">← Back to Labs</a>
+        
+        <div class="lab-container">
+            <h1>✅ Input Validation & Sanitization Lab</h1>
+            
+            <div class="explanation">
+                <h3>Why Validate Input?</h3>
+                <p>Prevents malicious data, ensures data integrity, and improves user experience.</p>
+            </div>
+
+            <div class="test-cases">
+                <h4>Test Cases:</h4>
+                <ul>
+                    <li>Email: <code>invalid-email</code> or <code>test@example.com</code></li>
+                    <li>Age: <code>not-a-number</code> or <code>150</code> or <code>25</code></li>
+                </ul>
+            </div>
+
+            <div class="demo-section vulnerable">
+                <h3>❌ No Validation</h3>
+                <p>Accepts any input without checking</p>
+                
+                <div>
+                    <label>Email: </label>
+                    <input type="text" id="vulnEmail" value="invalid-email">
+                </div>
+                <div>
+                    <label>Age: </label>
+                    <input type="text" id="vulnAge" value="not-a-number">
+                </div>
+                <button onclick="testValidationVulnerable()">Submit</button>
+                <div id="vulnValidationResult" class="result"></div>
+            </div>
+
+            <div class="demo-section secure">
+                <h3>✅ With Validation</h3>
+                <p>Validates email format and age range</p>
+                
+                <div>
+                    <label>Email: </label>
+                    <input type="text" id="secureEmail" value="test@example.com">
+                </div>
+                <div>
+                    <label>Age: </label>
+                    <input type="text" id="secureAge" value="25">
+                </div>
+                <button onclick="testValidationSecure()">Submit</button>
+                <div id="secureValidationResult" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testValidationVulnerable() {
+            const email = document.getElementById('vulnEmail').value;
+            const age = document.getElementById('vulnAge').value;
+            
+            const response = await fetch('/validation/vulnerable', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `email=${encodeURIComponent(email)}&age=${encodeURIComponent(age)}`
+            });
+            
+            const data = await response.json();
+            document.getElementById('vulnValidationResult').innerHTML = `
+                <strong>Accepted (no validation):</strong><br>
+                Email: ${data.email}<br>
+                Age: ${data.age}<br>
+                <em style="color: #dc2626;">This could cause problems!</em>
+            `;
+        }
+
+        async function testValidationSecure() {
+            const email = document.getElementById('secureEmail').value;
+            const age = document.getElementById('secureAge').value;
+            
+            const response = await fetch('/validation/secure', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `email=${encodeURIComponent(email)}&age=${encodeURIComponent(age)}`
+            });
+            
+            const data = await response.json();
+            const resultDiv = document.getElementById('secureValidationResult');
+            
+            if (data.errors) {
+                resultDiv.innerHTML = `
+                    <strong style="color: #dc2626;">Validation Errors:</strong><br>
+                    ${data.errors.map(err => `• ${err}`).join('<br>')}
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <strong style="color: #16a34a;">✓ Valid Input:</strong><br>
+                    Email: ${data.email}<br>
+                    Age: ${data.age}
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
