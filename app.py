@@ -1,14 +1,12 @@
-from flask import Flask, render_template, request, jsonify
-from flask_wtf.csrf import CSRFProtect
+from flask import Flask, render_template, request, jsonify, session
+from flask_wtf import CSRFProtect
 import sqlite3
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key'  # Change this to a random secret key in production
-csrf = CSRFProtect(app)
+app.secret_key = 'dev-secret-key-change-this-in-production'
 
 def init_database():
-    """Initialize the database if it doesn't exist"""
     db_path = 'database/vulnerable.db'
     
     # Check if database file exists
@@ -99,13 +97,41 @@ def sqli_secure():
 
 @app.route('/csrf')
 def csrf_page():
-    return render_template('csrf.html')
+    # Generate a simple token for demonstration
+    if 'csrf_token' not in session:
+        session['csrf_token'] = os.urandom(16).hex()
+    return render_template('csrf.html', csrf_token=session['csrf_token'])
 
 @app.route('/csrf/vulnerable/transfer', methods=['POST'])
 def csrf_vulnerable_transfer():
-    amount = request.form.get('amount')
-    to_account = request.form.get('to_account')
-    return f"Transferred ${amount} to account {to_account} (No CSRF protection!)"
+    amount = request.form.get('amount', '0')
+    to_account = request.form.get('to_account', 'unknown')
+    return jsonify({
+        'status': 'success',
+        'message': f'Transferred ${amount} to account {to_account}',
+        'note': 'This request had NO CSRF protection!'
+    })
+
+@app.route('/csrf/secure/transfer', methods=['POST'])
+def csrf_secure_transfer():
+    token = request.form.get('csrf_token', '')    # Simple token validation against session token
+    session_token = session.get('csrf_token', '')
+    
+    if not token or token != session_token:
+        return jsonify({
+            'status': 'error',
+            'message': 'CSRF token validation failed! Request blocked.'
+        }), 403
+    
+    amount = request.form.get('amount', '0')
+    to_account = request.form.get('to_account', 'unknown')
+    
+    return jsonify({
+        'status': 'success',
+        'message': f'Transferred ${amount} to account {to_account}',
+        'note': 'This request had CSRF protection!'
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
