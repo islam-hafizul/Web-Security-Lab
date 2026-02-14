@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, jsonify
+from flask_wtf.csrf import CSRFProtect
 import sqlite3
 import os
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your-secret-key'  # Change this to a random secret key in production
+csrf = CSRFProtect(app)
 
 def init_database():
     """Initialize the database if it doesn't exist"""
@@ -40,9 +43,9 @@ init_database()
 def index():
     return render_template('index.html')
 
+# Test route to verify database connection
 @app.route('/test-db')
 def test_db():
-    """Test route to verify database connection"""
     try:
         conn = get_db_connection()
         cursor = conn.execute("SELECT * FROM users LIMIT 5")
@@ -79,8 +82,7 @@ def sqli_vulnerable():
 def sqli_secure():
     username = request.form.get('username', '')
     
-    # SECURE: Parameterized query
-    query = "SELECT * FROM users WHERE username = ?"
+    query = "SELECT * FROM users WHERE username = ?"   # SECURE: Parameterized query
     
     conn = get_db_connection()
     try:
@@ -94,6 +96,16 @@ def sqli_secure():
         conn.close()
     
     return jsonify({'users': users, 'query': query})
+
+@app.route('/csrf')
+def csrf_page():
+    return render_template('csrf.html')
+
+@app.route('/csrf/vulnerable/transfer', methods=['POST'])
+def csrf_vulnerable_transfer():
+    amount = request.form.get('amount')
+    to_account = request.form.get('to_account')
+    return f"Transferred ${amount} to account {to_account} (No CSRF protection!)"
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
