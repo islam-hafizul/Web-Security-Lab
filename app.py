@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
+from flask_wtf import CSRFProtect
 import sqlite3
 import os
 import html
 import re 
 
 app = Flask(__name__)
+app.secret_key = 'dev-secret-key-change-this-in-production'
 
 # Initialize the database if it doesn't exist
 def init_database():
@@ -41,9 +43,9 @@ init_database()  # Initialize database on startup
 def index():
     return render_template('index.html')
 
+# Test route to verify database connection
 @app.route('/test-db')
 def test_db():
-    """Test route to verify database connection"""
     try:
         conn = get_db_connection()
         cursor = conn.execute("SELECT * FROM users LIMIT 5")
@@ -80,7 +82,7 @@ def sqli_vulnerable():
 def sqli_secure():
     username = request.form.get('username', '')
     
-    query = "SELECT * FROM users WHERE username = ?" # SECURE: Parameterized query
+    query = "SELECT * FROM users WHERE username = ?"   # SECURE: Parameterized query
     
     conn = get_db_connection()
     try:
@@ -109,6 +111,43 @@ def xss_secure():
     comment = request.form.get('comment', '')
     escaped_comment = html.escape(comment)  # SECURE: Escape user input
     return jsonify({'comment': escaped_comment})
+
+@app.route('/csrf')
+def csrf_page():
+    # Generate a simple token for demonstration
+    if 'csrf_token' not in session:
+        session['csrf_token'] = os.urandom(16).hex()
+    return render_template('csrf.html', csrf_token=session['csrf_token'])
+
+@app.route('/csrf/vulnerable/transfer', methods=['POST'])
+def csrf_vulnerable_transfer():
+    amount = request.form.get('amount', '0')
+    to_account = request.form.get('to_account', 'unknown')
+    return jsonify({
+        'status': 'success',
+        'message': f'Transferred ${amount} to account {to_account}',
+        'note': 'This request had NO CSRF protection!'
+    })
+
+@app.route('/csrf/secure/transfer', methods=['POST'])
+def csrf_secure_transfer():
+    token = request.form.get('csrf_token', '')    # Simple token validation against session token
+    session_token = session.get('csrf_token', '')
+    
+    if not token or token != session_token:
+        return jsonify({
+            'status': 'error',
+            'message': 'CSRF token validation failed! Request blocked.'
+        }), 403
+    
+    amount = request.form.get('amount', '0')
+    to_account = request.form.get('to_account', 'unknown')
+    
+    return jsonify({
+        'status': 'success',
+        'message': f'Transferred ${amount} to account {to_account}',
+        'note': 'This request had CSRF protection!'
+    })
 
 @app.route('/validation')
 def validation():
