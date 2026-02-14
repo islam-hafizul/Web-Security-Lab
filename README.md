@@ -20,18 +20,14 @@ Interactive learning platform demonstrating common web security vulnerabilities 
 - **Test payload**: ```<script>alert('XSS')</script>```
 
 ### 3. CSRF Lab
-- Vulnerable: No CSRF protection
-- Secure: Flask-WTF CSRF tokens
-- Demonstration: Form submission protection
+- **Vulnerable**: No CSRF protection
+- **Secure**: Flask-WTF CSRF tokens
+- **Demonstration**: Form submission protection
 
-<script>
-4. Input Validation Lab
-Vulnerable: No validation
-
-Secure: Regex validation and type checking
-
-Tests: Email format, age range, input sanitization
-</script>
+### 4. Input Validation Lab
+- **Vulnerable**: No validation
+- **Secure**: Regex validation and type checking
+- **Tests**: Email format, age range, input sanitization
 
 ## Tech Stack
 - **Backend**: Python Flask
