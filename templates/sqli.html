@@ -92,45 +92,6 @@
         </div>
     </div>
 
-    <script>
-        async function testVulnerable() {
-            const username = document.getElementById('vulnUsername').value;
-            const response = await fetch('/sqli/vulnerable', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `username=${encodeURIComponent(username)}`
-            });
-            
-            const data = await response.json();
-            document.getElementById('vulnResult').innerHTML = `
-                <strong>Query executed:</strong><br>
-                <code>${data.query}</code><br><br>
-                <strong>Results (${data.users.length} found):</strong><br>
-                <pre>${JSON.stringify(data.users, null, 2)}</pre>
-            `;
-        }
-
-        async function testSecure() {
-            const username = document.getElementById('secureUsername').value;
-            const response = await fetch('/sqli/secure', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `username=${encodeURIComponent(username)}`
-            });
-            
-            const data = await response.json();
-            document.getElementById('secureResult').innerHTML = `
-                <strong>Query executed:</strong><br>
-                <code>SELECT * FROM users WHERE username = ?</code><br>
-                <code>Parameter: "${username}"</code><br><br>
-                <strong>Results (${data.users.length} found):</strong><br>
-                <pre>${JSON.stringify(data.users, null, 2)}</pre>
-            `;
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

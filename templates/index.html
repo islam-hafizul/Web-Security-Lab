@@ -19,29 +19,34 @@
             <a href="{{ url_for('sqli_page') }}" class="lab-card">
                 <div class="lab-icon">💉</div>
                 <h2>SQL Injection</h2>
-                <p>Demo of SQL injection vulnerabilities and parameterized queries</p>
+                <p>Learn how SQL injection attacks work and how to prevent them with parameterized queries</p>
                 <span class="tech-badge">SQLite</span>
             </a>
+
             <a href="{{ url_for('xss_page') }}" class="lab-card">
-                <div class="lab-icon">💉</div>
-                <h2>XSS</h2>
-                <p>Cross-Site Scripting attack & prevention</p>
+                <div class="lab-icon">⚠️</div>
+                <h2>Cross-Site Scripting (XSS)</h2>
+                <p>Understand XSS vulnerabilities and implement proper output encoding</p>
                 <span class="tech-badge">HTML/JS</span>
             </a>
+
             <a href="{{ url_for('csrf_page') }}" class="lab-card">
+                <div class="lab-icon">🔄</div>
                 <h2>CSRF</h2>
-                <p>Cross-Site Request Forgery explanation + protection</p>
+                <p>Explore Cross-Site Request Forgery attacks and anti-CSRF tokens</p>
                 <span class="tech-badge">Flask-WTF</span>
             </a>
+
             <a href="{{ url_for('validation') }}" class="lab-card">
+                <div class="lab-icon">✅</div>
                 <h2>Input Validation</h2>
-                <p>Input validation & sanitization techniques</p>
+                <p>Implement proper input validation and sanitization techniques</p>
                 <span class="tech-badge">Regex</span>
             </a>
         </div>
 
         <div class="info-box">
-            <h3>📁 Project Structure</h3>
+            <!-- <h3>Project Structure</h3>
             <pre style="background: #f1f5f9; padding: 1rem; border-radius: 5px;">
 web-security-labs/
 ├── app.py
@@ -54,8 +59,8 @@ web-security-labs/
 └── static/
     └── css/
         └── style.css
-            </pre>
-            <h3>🎯 Learning Objectives</h3>
+            </pre> -->
+            <h3>Learning Objectives</h3>
             <ul>
                 <li>Understand common web security vulnerabilities</li>
                 <li>Learn how attackers exploit these vulnerabilities</li>
@@ -68,5 +73,6 @@ web-security-labs/
             <p>Tech Stack: Python Flask | HTML/CSS/JS | SQLite  </p>
         </footer>
     </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

@@ -45,39 +45,6 @@
         </div>
     </div>
 
-    <script>
-        async function testXSSVulnerable() {
-            const comment = document.getElementById('vulnComment').value;
-            const response = await fetch('/xss/vulnerable', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `comment=${encodeURIComponent(comment)}`
-            });
-            
-            const data = await response.json();
-            document.getElementById('vulnXssResult').innerHTML = `
-                <strong>User comment preview:</strong><br>
-                ${data.comment}<br><br>
-                <strong>Note:</strong> The script would execute in a real scenario!
-            `;
-        }
-
-        async function testXSSSecure() {
-            const comment = document.getElementById('secureComment').value;
-            const response = await fetch('/xss/secure', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `comment=${encodeURIComponent(comment)}`
-            });
-            
-            const data = await response.json();
-            document.getElementById('secureXssResult').innerHTML = `
-                <strong>User comment preview (safe):</strong><br>
-                ${data.comment}<br><br>
-                <strong>Raw HTML:</strong><br>
-                <code>${data.comment}</code>
-            `;
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

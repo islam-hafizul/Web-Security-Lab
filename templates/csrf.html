@@ -49,7 +49,7 @@
                 <div class="malicious-site">
                     <h4>⚠️ Simulated Malicious Site:</h4>
                     <p>Clicking this button simulates a hidden form from another website:</p>
-                    <button onclick="simulateMaliciousRequest()">🎁 Click for Free Gift!</button>
+                    <button onclick="testCSRFVulnerable()">🎁 Click for Free Gift!</button>
                     <div id="maliciousResult" class="result"></div>
                 </div>
             </div>
@@ -75,67 +75,13 @@
                 <div class="secure-site">
                     <h4>✅ Attempt Malicious Request:</h4>
                     <p>This attempts to submit without the CSRF token:</p>
-                    <button onclick="attemptMaliciousCSRF()">🔒 Try to Bypass Protection</button>
+                    <button onclick="testCSRFSecure()">🔒 Try to Bypass Protection</button>
                     <div id="secureResult" class="result"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function simulateMaliciousRequest() {
-            // Create a hidden form (simulates an attacker's site)
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/csrf/vulnerable/transfer';
-            form.target = '_blank';
-            
-            // Hidden inputs
-            const amountInput = document.createElement('input');
-            amountInput.type = 'hidden';
-            amountInput.name = 'amount';
-            amountInput.value = '5000';
-            
-            const accountInput = document.createElement('input');
-            accountInput.type = 'hidden';
-            accountInput.name = 'to_account';
-            accountInput.value = 'hacker456';
-            
-            form.appendChild(amountInput);
-            form.appendChild(accountInput);
-            
-            // Submit the form
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-            
-            document.getElementById('maliciousResult').innerHTML = 
-                '<span style="color: #dc2626;">⚠️ Malicious request sent! The vulnerable form accepted it.</span>';
-        }
-
-        async function attemptMaliciousCSRF() {
-            try {
-                const response = await fetch('/csrf/secure/transfer', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'amount=9999&to_account=hacker'
-                });
-                
-                if (response.status === 400) {
-                    document.getElementById('secureResult').innerHTML = 
-                        '<span style="color: #16a34a;">✅ Blocked! CSRF token missing (400 Bad Request)</span>';
-                } else {
-                    const text = await response.text();
-                    document.getElementById('secureResult').innerHTML = 
-                        `<span style="color: #dc2626;">❌ Request succeeded: ${text}</span>`;
-                }
-            } catch (error) {
-                document.getElementById('secureResult').innerHTML = 
-                    '<span style="color: #16a34a;">✅ Blocked by CSRF protection!</span>';
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

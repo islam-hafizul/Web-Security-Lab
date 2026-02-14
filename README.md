@@ -42,12 +42,22 @@ cd web-security-labs
 ```bash
 pip install -r requirements.txt
 ```
-### 3. Run the application:
+### 3. Initialize the database:
+
+```bash
+python database/init_db.py
+```
+
+### 4. Run the application:
 
 ```bash
 python app.py
 ```
-### 4. Visit http://localhost:5000
+### 4. Open your browser and navigate to:
+
+```text
+http://localhost:5000
+```
 
 ## Tech Stack
 - **Backend**: Python Flask

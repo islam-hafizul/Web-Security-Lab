@@ -67,52 +67,6 @@
         </div>
     </div>
 
-    <script>
-        async function testValidationVulnerable() {
-            const email = document.getElementById('vulnEmail').value;
-            const age = document.getElementById('vulnAge').value;
-            
-            const response = await fetch('/validation/vulnerable', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `email=${encodeURIComponent(email)}&age=${encodeURIComponent(age)}`
-            });
-            
-            const data = await response.json();
-            document.getElementById('vulnValidationResult').innerHTML = `
-                <strong>Accepted (no validation):</strong><br>
-                Email: ${data.email}<br>
-                Age: ${data.age}<br>
-                <em style="color: #dc2626;">This could cause problems!</em>
-            `;
-        }
-
-        async function testValidationSecure() {
-            const email = document.getElementById('secureEmail').value;
-            const age = document.getElementById('secureAge').value;
-            
-            const response = await fetch('/validation/secure', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `email=${encodeURIComponent(email)}&age=${encodeURIComponent(age)}`
-            });
-            
-            const data = await response.json();
-            const resultDiv = document.getElementById('secureValidationResult');
-            
-            if (data.errors) {
-                resultDiv.innerHTML = `
-                    <strong style="color: #dc2626;">Validation Errors:</strong><br>
-                    ${data.errors.map(err => `• ${err}`).join('<br>')}
-                `;
-            } else {
-                resultDiv.innerHTML = `
-                    <strong style="color: #16a34a;">✓ Valid Input:</strong><br>
-                    Email: ${data.email}<br>
-                    Age: ${data.age}
-                `;
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
