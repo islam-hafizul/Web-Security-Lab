@@ -18,14 +18,13 @@ Interactive learning platform demonstrating common web security vulnerabilities 
 - **Vulnerable**: Direct HTML injection
 - **Secure**: HTML entity escaping
 - **Test payload**: ```<script>alert('XSS')</script>```
+
+### 3. CSRF Lab
+- Vulnerable: No CSRF protection
+- Secure: Flask-WTF CSRF tokens
+- Demonstration: Form submission protection
+
 <script>
-3. CSRF Lab
-Vulnerable: No CSRF protection
-
-Secure: Flask-WTF CSRF tokens
-
-Demonstration: Form submission protection
-
 4. Input Validation Lab
 Vulnerable: No validation
 
