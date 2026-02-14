@@ -3,95 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Injection Lab</title>
+    <title>SQL Injection Lab - Web Security</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .lab-container {
-            background: white;
-            border-radius: 8px;
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 800px;
-        }
-        
-        .demo-section {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            border-radius: 8px;
-            background: #f8fafc;
-        }
-        
-        .vulnerable {
-            border-left: 4px solid var(--danger);
-        }
-        
-        input {
-            padding: 0.5rem;
-            width: 300px;
-            margin-right: 1rem;
-        }
-        
-        button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .result {
-            background: white;
-            padding: 1rem;
-            border-radius: 4px;
-            margin-top: 1rem;
-            font-family: monospace;
-        }
-
-        .secure {
-            border-left: 4px solid var(--success);
-        }
-    </style>
 </head>
 <body>
     <div class="container">
-        <a href="/" style="display: inline-block; margin-bottom: 1rem;">← Back to Labs</a>
+        <a href="/" class="back-link">← Back to Labs</a>
         
         <div class="lab-container">
             <h1>💉 SQL Injection Lab</h1>
             
             <div class="explanation">
                 <h3>What is SQL Injection?</h3>
-                <p>SQL Injection occurs when an attacker inserts malicious SQL code into input fields.</p>
-                <p><strong>Test Payload:</strong> <code>admin' OR '1'='1</code></p>
+                <p>SQL Injection occurs when an attacker inserts malicious SQL code into input fields, allowing them to manipulate database queries. This can lead to unauthorized data access, data modification, or even complete database compromise.</p>
+                
+                <div class="example-box">
+                    <h4>How it works:</h4>
+                    <p>Instead of entering a normal username, attackers input SQL code like:</p>
+                    <code>admin' OR '1'='1</code>
+                    <p>This changes the query from:</p>
+                    <code>SELECT * FROM users WHERE username = 'admin'</code>
+                    <p>To:</p>
+                    <code>SELECT * FROM users WHERE username = 'admin' OR '1'='1'</code>
+                    <p>Since '1'='1' is always true, this returns ALL users!</p>
+                </div>
             </div>
 
             <div class="demo-section vulnerable">
-                <h3>⚠️ Vulnerable Implementation</h3>
-                <p>This uses string concatenation in SQL queries - DANGEROUS!</p>
+                <h3>❌ Vulnerable Implementation</h3>
+                <p>This code directly concatenates user input into the SQL query - <strong>DON'T DO THIS!</strong></p>
                 <div class="input-group">
-                    <input type="text" id="vulnUsername" placeholder="Enter username" value="admin' OR '1'='1">
-                    <button onclick="testVulnerable()">Execute Query</button>
+                    <input type="text" id="vulnUsername" placeholder="Enter username (e.g., admin' OR '1'='1)" value="admin' OR '1'='1">
+                    <button onclick="testVulnerable()">Test Vulnerable Query</button>
                 </div>
                 <div class="result" id="vulnResult">
-                    <!-- Results will appear here -->
+                    <p class="hint">Click the button to see the vulnerable query in action</p>
                 </div>
             </div>
 
             <div class="demo-section secure">
                 <h3>✅ Secure Implementation</h3>
-                <p>This uses parameterized queries - SAFE!</p>
+                <p>This code uses parameterized queries - <strong>ALWAYS DO THIS!</strong></p>
                 <div class="input-group">
-                    <input type="text" id="secureUsername" placeholder="Enter username" value="admin' OR '1'='1">
-                    <button onclick="testSecure()">Execute Query</button>
+                    <input type="text" id="secureUsername" placeholder="Enter username (e.g., admin' OR '1'='1)" value="admin' OR '1'='1">
+                    <button onclick="testSecure()">Test Secure Query</button>
                 </div>
                 <div class="result" id="secureResult">
-                    <!-- Results will appear here -->
+                    <p class="hint">Click the button to see how parameterized queries prevent injection</p>
                 </div>
+            </div>
+
+            <div class="try-it-box">
+                <h4>Try these payloads:</h4>
+                <ul>
+                    <li><code>admin' OR '1'='1</code> - Bypass authentication</li>
+                    <li><code>admin' --</code> - Comment out rest of query</li>
+                    <li><code>' UNION SELECT * FROM users --</code> - Union-based injection</li>
+                    <li><code>admin' AND 1=1 --</code> - Always true condition</li>
+                </ul>
             </div>
         </div>
     </div>
-
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

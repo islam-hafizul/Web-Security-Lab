@@ -3,70 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Validation Lab</title>
+    <title>Input Validation Lab - Web Security</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .lab-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
-        .demo-section { margin: 2rem 0; padding: 1.5rem; background: #f8fafc; border-radius: 8px; }
-        input { padding: 0.5rem; margin: 0.5rem 0; width: 300px; display: block; }
-        .test-cases { background: #fef3c7; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
-        code { background: #e5e7eb; padding: 0.2rem 0.4rem; border-radius: 4px; }
-    </style>
 </head>
 <body>
     <div class="container">
-        <a href="/" style="display: inline-block; margin-bottom: 1rem;">← Back to Labs</a>
+        <a href="/" class="back-link">← Back to Labs</a>
         
         <div class="lab-container">
             <h1>✅ Input Validation & Sanitization Lab</h1>
             
             <div class="explanation">
                 <h3>Why Validate Input?</h3>
-                <p>Prevents malicious data, ensures data integrity, and improves user experience.</p>
-            </div>
-
-            <div class="test-cases">
-                <h4>Test Cases:</h4>
-                <ul>
-                    <li>Email: <code>invalid-email</code> or <code>test@example.com</code></li>
-                    <li>Age: <code>not-a-number</code> or <code>150</code> or <code>25</code></li>
-                </ul>
+                <p>Input validation ensures that only properly formatted data enters your application. This prevents various attacks including injection, buffer overflows, and data corruption.</p>
+                
+                <div class="example-box">
+                    <h4>Types of Validation:</h4>
+                    <ul>
+                        <li><strong>Syntax Validation:</strong> Check format (email, phone, etc.)</li>
+                        <li><strong>Range Validation:</strong> Check values within bounds</li>
+                        <li><strong>Type Validation:</strong> Check data types</li>
+                        <li><strong>Length Validation:</strong> Check string length</li>
+                        <li><strong>Whitelist Validation:</strong> Allow only known good values</li>
+                    </ul>
+                </div>
             </div>
 
             <div class="demo-section vulnerable">
-                <h3>❌ No Validation</h3>
-                <p>Accepts any input without checking</p>
+                <h3>❌ Vulnerable Implementation (No Validation)</h3>
+                <p>This form accepts any input without checking - <strong>DANGEROUS!</strong></p>
                 
-                <div>
-                    <label>Email: </label>
-                    <input type="text" id="vulnEmail" value="invalid-email">
+                <div class="input-group" style="flex-direction: column; gap: 1rem;">
+                    <input type="text" id="vulnEmail" placeholder="Email" value="not_an_email">
+                    <input type="text" id="vulnAge" placeholder="Age" value="-5">
+                    <button onclick="testValidationVulnerable()">Submit (No Validation)</button>
                 </div>
-                <div>
-                    <label>Age: </label>
-                    <input type="text" id="vulnAge" value="not-a-number">
+                
+                <div class="result" id="vulnValidationResult">
+                    <p class="hint">Try submitting invalid data - it will be accepted!</p>
                 </div>
-                <button onclick="testValidationVulnerable()">Submit</button>
-                <div id="vulnValidationResult" class="result"></div>
             </div>
 
             <div class="demo-section secure">
-                <h3>✅ With Validation</h3>
-                <p>Validates email format and age range</p>
+                <h3>✅ Secure Implementation (With Validation)</h3>
+                <p>This form validates all input before processing - <strong>SAFE!</strong></p>
                 
-                <div>
-                    <label>Email: </label>
-                    <input type="text" id="secureEmail" value="test@example.com">
+                <div class="input-group" style="flex-direction: column; gap: 1rem;">
+                    <input type="text" id="secureEmail" placeholder="Email (e.g., user@example.com)" value="test@example.com">
+                    <input type="text" id="secureAge" placeholder="Age (1-120)" value="25">
+                    <button onclick="testValidationSecure()">Submit (With Validation)</button>
                 </div>
-                <div>
-                    <label>Age: </label>
-                    <input type="text" id="secureAge" value="25">
+                
+                <div class="result" id="secureValidationResult">
+                    <p class="hint">Invalid data will be rejected with error messages</p>
                 </div>
-                <button onclick="testValidationSecure()">Submit</button>
-                <div id="secureValidationResult" class="result"></div>
+            </div>
+
+            <div class="try-it-box">
+                <h4>🎯 Test Cases:</h4>
+                
+                <h5>Invalid Email Formats:</h5>
+                <ul>
+                    <li><code>not_an_email</code> - Missing @</li>
+                    <li><code>user@.com</code> - Missing domain name</li>
+                    <li><code>@example.com</code> - Missing local part</li>
+                    <li><code>user@example</code> - Missing TLD</li>
+                    <li><code>user name@example.com</code> - Contains space</li>
+                </ul>
+                
+                <h5>Invalid Age Values:</h5>
+                <ul>
+                    <li><code>-5</code> - Negative number</li>
+                    <li><code>0</code> - Too young</li>
+                    <li><code>150</code> - Too old</li>
+                    <li><code>twenty-five</code> - Not a number</li>
+                    <li><code>25.5</code> - Not an integer</li>
+                </ul>
+            </div>
+
+            <div class="validation-rules">
+                <h4>📋 Validation Rules Used:</h4>
+                <table style="width: 100%;">
+                    <tr>
+                        <th style="width: 20%;">Field</th>
+                        <th style="width: 60%;">Rule</th>
+                        <th style="width: 20%;">Example</th>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>Must be valid format: <code>^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$</code></td>
+                        <td>user@example.com</td>
+                    </tr>
+                    <tr>
+                        <td>Age</td>
+                        <td>Integer between 1 and 120</td>
+                        <td>25</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="protection-box">
+                <h4>🛡️ Best Practices:</h4>
+                <ul>
+                    <li><strong>Validate on both client and server side</strong> (client for UX, server for security)</li>
+                    <li><strong>Use whitelist validation</strong> (allow known good, reject everything else)</li>
+                    <li><strong>Sanitize input</strong> (remove/escape dangerous characters)</li>
+                    <li><strong>Use type coercion</strong> (convert to expected types)</li>
+                    <li><strong>Set reasonable limits</strong> (length, range, size)</li>
+                </ul>
             </div>
         </div>
     </div>
-
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
